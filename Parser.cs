@@ -88,7 +88,6 @@ namespace WheatLanguage
 				}
 				else if (token.Type == TokenType.If)
 				{
-					// if bag x weight lessthan 10 sleep 90 hours
 					VerifyRemainingTokens(8, "unexpected end of input at IF");
 					ExpectToken(TokenType.Bag, "expected keyword 'bag' after 'if'");
 

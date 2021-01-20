@@ -8,7 +8,11 @@ namespace WheatLanguage
 	{
 		static void Main(string[] args)
 		{
-			string s = Console.ReadLine();
+			string s =
+				"put 2 grain in bag a " +
+				"announce bag a " +
+				"if bag a weight lessthan 0.001 sleep 1 hours";
+
 			Lexer lexer = new Lexer(s);
 			Parser parser = new Parser(lexer.Tokenize());
 
@@ -17,8 +21,7 @@ namespace WheatLanguage
 
 			Runtime runtime = new Runtime(
 				parser.AssembleTokens(),
-				3,
-				"",
+				200,
 				writer,
 				("a", 2),
 				("b", 4),

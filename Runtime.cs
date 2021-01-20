@@ -23,6 +23,13 @@ namespace WheatLanguage
 				MaxWeight = maxWeight;
 			}
 
+			public Bag(float grains, float maxWeight)
+			{
+				Grains = grains;
+				Labels = "";
+				MaxWeight = maxWeight;
+			}
+
 			public void Empty()
 			{
 				Grains = 0;
@@ -37,11 +44,11 @@ namespace WheatLanguage
 		private Bag ground;
 		private StringWriter output;
 
-		public Runtime(Statement[] statements, int grainsOnGround, string labelsOnGround, StringWriter output, params (string name, float maxWeight)[] bags)
+		public Runtime(Statement[] statements, int grainsOnGround, StringWriter output, params (string name, float maxWeight)[] bags)
 		{
 			this.statements = statements;
 			this.bags = new Dictionary<string, Bag>();
-			this.ground = new Bag(float.PositiveInfinity); // lol
+			this.ground = new Bag(grainsOnGround, float.PositiveInfinity); // lol
 			this.output = output;
 
 			foreach ((string name, float maxWeight) bag in bags)
@@ -156,6 +163,9 @@ namespace WheatLanguage
 					if (bag.Weight > bag.MaxWeight)
 						Program.Error($"bag {bagName} broke (weight {bag.Weight}, maximum weight is {bag.MaxWeight})");
 				}
+
+				if (ground.Grains < 0)
+					Program.Error("attempted to take grains from ground when there were none");
 			}
 		}
 
