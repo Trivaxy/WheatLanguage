@@ -3,5 +3,3 @@ obj/
 Properties/
 .vs/
 *.cache
-*.cache
-obj/Debug/netcoreapp3.1/WheatLanguage.csprojAssemblyReference.cache
