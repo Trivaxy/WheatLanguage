@@ -54,6 +54,7 @@ namespace WheatLanguage
 					"greaterthan" => TokenType.GreaterThan,
 					"sleep" => TokenType.Sleep,
 					"hours" => TokenType.Hours,
+					"sweep" => TokenType.Sweep,
 					_ => TokenType.Pending,
 				};
 

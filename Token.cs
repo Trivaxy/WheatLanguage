@@ -29,7 +29,8 @@
 		Greater,
 		GreaterThan,
 		Sleep,
-		Hours
+		Hours,
+		Sweep
 	}
 
 	public struct Token

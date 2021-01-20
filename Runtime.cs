@@ -150,6 +150,16 @@ namespace WheatLanguage
 
 						break;
 
+					case StatementType.SweepInBag:
+						Bag sweptInBag = GetBag(statement.Operands[0] as string);
+
+						sweptInBag.Grains += ground.Grains;
+						sweptInBag.Labels += ground.Labels;
+
+						ground.Empty();
+
+						break;
+
 					default:
 						Program.Error("invalid statement (this should never happen): " + statement);
 						break;

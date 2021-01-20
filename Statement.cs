@@ -9,6 +9,7 @@
 		DumpBag,
 		AnnounceBag,
 		IfXSleep,
+		SweepInBag
 	}
 
 	public struct Statement

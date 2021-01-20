@@ -111,6 +111,17 @@ namespace WheatLanguage
 
 					statements.Add(new Statement(StatementType.IfXSleep, identifierToken.Value, comparisonToken, comparisonNumber.Value, sleepNumber.Value));
 				}
+				else if (token.Type == TokenType.Sweep)
+				{
+					VerifyRemainingTokens(3, "unexpected end of input at SWEEP");
+					ExpectToken(TokenType.In, "expected keyword 'in' after 'sweep'");
+
+					ExpectToken(TokenType.Bag, "expected keyword 'bag' after 'in'");
+
+					Token identifierToken = ExpectToken(TokenType.Identifier, "expected identifier after keyword 'bag'");
+
+					statements.Add(new Statement(StatementType.SweepInBag, identifierToken.Value));
+				}
 				else
 					Program.Error("unexpected keyword/token: " + token.Type.ToString());
 			}
