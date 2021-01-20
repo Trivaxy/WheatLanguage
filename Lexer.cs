@@ -15,7 +15,7 @@ namespace WheatLanguage
 
 		public Lexer(string inputSource)
 		{
-			this.inputSource = inputSource;
+			this.inputSource = inputSource.Trim();
 			currentTokenText = new StringBuilder();
 		}
 
