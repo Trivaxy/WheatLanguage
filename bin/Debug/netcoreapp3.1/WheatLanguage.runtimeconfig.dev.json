@@ -1,0 +1,8 @@
+{
+  "runtimeOptions": {
+    "additionalProbingPaths": [
+      "C:\\Users\\Trivaxy\\.dotnet\\store\\|arch|\\|tfm|",
+      "C:\\Users\\Trivaxy\\.nuget\\packages"
+    ]
+  }
+}

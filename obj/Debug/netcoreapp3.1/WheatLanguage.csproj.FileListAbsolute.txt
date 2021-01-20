@@ -1,0 +1,13 @@
+C:\Users\Trivaxy\Documents\Workspace\WheatLanguage\bin\Debug\netcoreapp3.1\WheatLanguage.exe
+C:\Users\Trivaxy\Documents\Workspace\WheatLanguage\bin\Debug\netcoreapp3.1\WheatLanguage.deps.json
+C:\Users\Trivaxy\Documents\Workspace\WheatLanguage\bin\Debug\netcoreapp3.1\WheatLanguage.runtimeconfig.json
+C:\Users\Trivaxy\Documents\Workspace\WheatLanguage\bin\Debug\netcoreapp3.1\WheatLanguage.runtimeconfig.dev.json
+C:\Users\Trivaxy\Documents\Workspace\WheatLanguage\bin\Debug\netcoreapp3.1\WheatLanguage.dll
+C:\Users\Trivaxy\Documents\Workspace\WheatLanguage\bin\Debug\netcoreapp3.1\WheatLanguage.pdb
+C:\Users\Trivaxy\Documents\Workspace\WheatLanguage\obj\Debug\netcoreapp3.1\WheatLanguage.csprojAssemblyReference.cache
+C:\Users\Trivaxy\Documents\Workspace\WheatLanguage\obj\Debug\netcoreapp3.1\WheatLanguage.AssemblyInfoInputs.cache
+C:\Users\Trivaxy\Documents\Workspace\WheatLanguage\obj\Debug\netcoreapp3.1\WheatLanguage.AssemblyInfo.cs
+C:\Users\Trivaxy\Documents\Workspace\WheatLanguage\obj\Debug\netcoreapp3.1\WheatLanguage.csproj.CoreCompileInputs.cache
+C:\Users\Trivaxy\Documents\Workspace\WheatLanguage\obj\Debug\netcoreapp3.1\WheatLanguage.dll
+C:\Users\Trivaxy\Documents\Workspace\WheatLanguage\obj\Debug\netcoreapp3.1\WheatLanguage.pdb
+C:\Users\Trivaxy\Documents\Workspace\WheatLanguage\obj\Debug\netcoreapp3.1\WheatLanguage.genruntimeconfig.cache
