@@ -9,17 +9,22 @@ namespace WheatLanguage
 		static void Main(string[] args)
 		{
 			string s = @"
-put 5 grain in bag a
-put 10 grain in bag b
+put 25 grain in bag a
+put 4 grain in bag b
 
 sweep in bag g
-grow bag a
-scoop in bag c
-sweep in bag a
-
 grow bag b
-scoop in bag b 
+scoop in bag b
+sweep in bag g
+
+grow bag a
+scoop in bag a
 sweep in bag c
+dump bag g
+put 1 grain in bag d
+sweep in bag g
+
+if bag d weight lessthan bag b weight sleep 10 hours
 
 announce bag a
 announce bag b

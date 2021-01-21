@@ -24,13 +24,14 @@
 		If,
 		Weight,
 		Is,
-		Less,
 		LessThan,
-		Greater,
+		LessThanOrEquals,
 		GreaterThan,
+		GreaterThanOrEquals,
 		Sleep,
 		Hours,
-		Sweep
+		Sweep,
+		And,
 	}
 
 	public struct Token

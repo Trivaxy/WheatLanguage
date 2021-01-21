@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace WheatLanguage
@@ -88,10 +89,23 @@ namespace WheatLanguage
 						break;
 
 					case StatementType.GrowBag:
-						Bag grownBag = GetBag(statement.Operands[0] as string);
+						Bag firstGrownBag = GetBag(statement.Operands[0] as string);
 
-						ground.Grains += grownBag.Grains * 2;
-						grownBag.Grains = 0;
+						if (statement.Operands.Length == 1)
+						{
+							ground.Grains += firstGrownBag.Grains * 2;
+							firstGrownBag.Grains = 0;
+						}
+						else
+						{
+							Bag secondGrownBag = GetBag(statement.Operands[1] as string);
+
+							float difference = Math.Abs(firstGrownBag.Grains - secondGrownBag.Grains);
+							ground.Grains += difference * 2;
+
+							firstGrownBag.Grains -= difference / 2;
+							secondGrownBag.Grains -= difference / 2;
+						}
 
 						break;
 
@@ -126,7 +140,14 @@ namespace WheatLanguage
 					case StatementType.IfXSleep:
 						Bag comparedBag = GetBag(statement.Operands[0] as string);
 						TokenType comparisonToken = (TokenType)statement.Operands[1];
-						float comparisonNumber = (float)statement.Operands[2];
+
+						float comparisonNumber = 0f;
+
+						if (statement.Operands[2] is float number)
+							comparisonNumber = number;
+						else if (statement.Operands[2] is string identifier)
+							comparisonNumber = GetBag(identifier).Weight;
+
 						float sleepNumber = (float)statement.Operands[3];
 
 						if (sleepNumber % 1f != 0f)
@@ -135,10 +156,10 @@ namespace WheatLanguage
 						bool result = comparisonToken switch
 						{
 							TokenType.Is => comparedBag.Weight == comparisonNumber,
-							TokenType.Less => comparedBag.Weight < comparisonNumber,
-							TokenType.LessThan => comparedBag.Weight <= comparisonNumber,
-							TokenType.Greater => comparedBag.Weight > comparisonNumber,
-							TokenType.GreaterThan => comparedBag.Weight >= comparisonNumber,
+							TokenType.LessThan => comparedBag.Weight < comparisonNumber,
+							TokenType.LessThanOrEquals => comparedBag.Weight <= comparisonNumber,
+							TokenType.GreaterThan => comparedBag.Weight > comparisonNumber,
+							TokenType.GreaterThanOrEquals => comparedBag.Weight >= comparisonNumber,
 							_ => Program.Error("invalid statement (this should never happen): " + statement)
 						};
 

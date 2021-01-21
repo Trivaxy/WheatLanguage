@@ -48,13 +48,14 @@ namespace WheatLanguage
 					"if" => TokenType.If,
 					"weight" => TokenType.Weight,
 					"is" => TokenType.Is,
-					"less" => TokenType.Less,
 					"lessthan" => TokenType.LessThan,
-					"greater" => TokenType.Greater,
+					"lessthanorequals" => TokenType.LessThanOrEquals,
 					"greaterthan" => TokenType.GreaterThan,
+					"greaterthanorequals" => TokenType.GreaterThanOrEquals,
 					"sleep" => TokenType.Sleep,
 					"hours" => TokenType.Hours,
 					"sweep" => TokenType.Sweep,
+					"and" => TokenType.And,
 					_ => TokenType.Pending,
 				};
 

@@ -51,12 +51,22 @@ namespace WheatLanguage
 				}
 				else if (token.Type == TokenType.Grow)
 				{
-					VerifyRemainingTokens(4, "unexpected end of input at GROW");
+					VerifyRemainingTokens(2, "unexpected end of input at GROW");
 					ExpectToken(TokenType.Bag, "expected keyword 'bag' after 'grow'");
 
-					Token identifierToken = ExpectToken(TokenType.Identifier, "expected identifier after keyword 'bag'");
+					Token firstIdentifierToken = ExpectToken(TokenType.Identifier, "expected identifier after keyword 'bag'");
 
-					statements.Add(new Statement(StatementType.GrowBag, identifierToken.Value));
+					if (PeekToken().Type == TokenType.And)
+					{
+						NextToken();
+						ExpectToken(TokenType.Bag, "expected keyword 'bag' after 'and'");
+
+						Token secondIdentifierToken = ExpectToken(TokenType.Identifier, "expected identifier after keyword 'bag'");
+
+						statements.Add(new Statement(StatementType.GrowBag, firstIdentifierToken.Value, secondIdentifierToken.Value));
+					}
+					else
+						statements.Add(new Statement(StatementType.GrowBag, firstIdentifierToken.Value));
 				}
 				else if (token.Type == TokenType.Scoop)
 				{
@@ -88,28 +98,38 @@ namespace WheatLanguage
 				}
 				else if (token.Type == TokenType.If)
 				{
-					VerifyRemainingTokens(8, "unexpected end of input at IF");
+					VerifyRemainingTokens(4, "unexpected end of input at IF");
 					ExpectToken(TokenType.Bag, "expected keyword 'bag' after 'if'");
 
 					Token identifierToken = ExpectToken(TokenType.Identifier, "expected identifier after keyword 'bag'");
+					Token comparisonToken = default;
 
 					ExpectToken(TokenType.Weight, "expected keyword 'weight' after 'bag'");
 
-					TokenType comparisonToken = NextToken().Type;
+					TokenType comparisonType = NextToken().Type;
 
-					if (!(comparisonToken == TokenType.Is || comparisonToken == TokenType.Less || comparisonToken == TokenType.LessThan
-						|| comparisonToken == TokenType.Greater || comparisonToken == TokenType.GreaterThan))
-						Program.Error("expected keyword 'is', 'less', 'lessthan', 'greater' or 'greaterthan' after 'weight'");
+					if (!(comparisonType == TokenType.Is || comparisonType == TokenType.LessThan || comparisonType == TokenType.LessThanOrEquals
+						|| comparisonType == TokenType.GreaterThan || comparisonType == TokenType.GreaterThanOrEquals))
+						Program.Error("expected keyword 'is', 'lessthan' or 'greaterthan' after 'weight'");
 
-					Token comparisonNumber = ExpectToken(TokenType.Number, $"expected number after keyword '{comparisonToken.ToString().ToLower()}'");
+					if (PeekToken().Type == TokenType.Bag)
+					{
+						NextToken();
 
-					ExpectToken(TokenType.Sleep, "expected keyword 'sleep' after " + comparisonNumber.Value);
+						comparisonToken = ExpectToken(TokenType.Identifier, "expected identifier after keyword 'bag'");
+
+						ExpectToken(TokenType.Weight, "expected keyword 'weight' after 'bag'");
+					}
+					else
+					    comparisonToken = ExpectToken(TokenType.Number, $"expected number after keyword '{comparisonType.ToString().ToLower()}'");
+
+					ExpectToken(TokenType.Sleep, "expected keyword 'sleep' after " + comparisonToken.Value);
 
 					Token sleepNumber = ExpectToken(TokenType.Number, "expected number after keyword 'sleep'");
 
 					ExpectToken(TokenType.Hours, "expected keyword 'hours' after " + sleepNumber.Value);
 
-					statements.Add(new Statement(StatementType.IfXSleep, identifierToken.Value, comparisonToken, comparisonNumber.Value, sleepNumber.Value));
+					statements.Add(new Statement(StatementType.IfXSleep, identifierToken.Value, comparisonType, comparisonToken.Value, sleepNumber.Value));
 				}
 				else if (token.Type == TokenType.Sweep)
 				{
