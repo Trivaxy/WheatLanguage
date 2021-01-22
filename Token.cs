@@ -8,8 +8,6 @@
 		Number,
 		Put,
 		Add,
-		Remove,
-		From,
 		In,
 		Bag,
 		Grain,
@@ -28,10 +26,11 @@
 		LessThanOrEquals,
 		GreaterThan,
 		GreaterThanOrEquals,
-		Sleep,
 		Hours,
 		Sweep,
 		And,
+		Colon,
+		Do
 	}
 
 	public struct Token

@@ -27,6 +27,13 @@ namespace WheatLanguage
 
 			while (!EOF)
 			{
+				if (CurrentCharacter == ':')
+				{
+					tokens.Add(new Token(TokenType.Colon));
+					currentPosition++;
+					continue;
+				}
+
 				string word = ReadNextWord();
 
 				object tokenValue = null;
@@ -34,8 +41,6 @@ namespace WheatLanguage
 				{
 					"put" => TokenType.Put,
 					"add" => TokenType.Add,
-					"remove" => TokenType.Remove,
-					"from" => TokenType.From,
 					"in" => TokenType.In,
 					"bag" => TokenType.Bag,
 					"grain" => TokenType.Grain,
@@ -52,10 +57,10 @@ namespace WheatLanguage
 					"lessthanorequals" => TokenType.LessThanOrEquals,
 					"greaterthan" => TokenType.GreaterThan,
 					"greaterthanorequals" => TokenType.GreaterThanOrEquals,
-					"sleep" => TokenType.Sleep,
 					"hours" => TokenType.Hours,
 					"sweep" => TokenType.Sweep,
 					"and" => TokenType.And,
+					"do" => TokenType.Do,
 					_ => TokenType.Pending,
 				};
 
@@ -92,8 +97,18 @@ namespace WheatLanguage
 			while (char.IsWhiteSpace(CurrentCharacter))
 				currentPosition++;
 
-			while (!EOF && !char.IsWhiteSpace(CurrentCharacter))
+			while (!EOF && !char.IsWhiteSpace(CurrentCharacter) && CurrentCharacter != ':')
 			{
+				if (CurrentCharacter == '#')
+				{
+					currentPosition++;
+
+					while (CurrentCharacter != '\n')
+						currentPosition++;
+
+					currentPosition++;
+				}
+
 				currentTokenText.Append(CurrentCharacter);
 
 				if (CurrentCharacter == '"' || CurrentCharacter == '\'')

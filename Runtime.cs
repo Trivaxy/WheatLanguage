@@ -40,13 +40,15 @@ namespace WheatLanguage
 		}
 
 		private Statement[] statements;
+		private Dictionary<string, int> marks;
 		private Dictionary<string, Bag> bags;
 		private Bag ground;
 		private Action<string> announceCallBack;
 
-		public Runtime(Statement[] statements, int grainsOnGround, Action<string> announceCallBack, params (string name, float maxWeight)[] bags)
+		public Runtime(Statement[] statements, Dictionary<string, int> marks, int grainsOnGround, Action<string> announceCallBack, params (string name, float maxWeight)[] bags)
 		{
 			this.statements = statements;
+			this.marks = marks;
 			this.bags = new Dictionary<string, Bag>();
 			this.ground = new Bag(grainsOnGround, float.PositiveInfinity); // lol
 			this.announceCallBack = announceCallBack;
@@ -136,7 +138,7 @@ namespace WheatLanguage
 
 						break;
 
-					case StatementType.IfXSleep:
+					case StatementType.IfXDoMark:
 						Bag comparedBag = GetBag(statement.Operands[0] as string);
 						TokenType comparisonToken = (TokenType)statement.Operands[1];
 
@@ -146,11 +148,6 @@ namespace WheatLanguage
 							comparisonNumber = number;
 						else if (statement.Operands[2] is string identifier)
 							comparisonNumber = GetBag(identifier).Weight;
-
-						float sleepNumber = (float)statement.Operands[3];
-
-						if (sleepNumber % 1f != 0f)
-							Program.Error("cannot sleep for non-integer hours: " + sleepNumber);
 
 						bool result = comparisonToken switch
 						{
@@ -164,8 +161,12 @@ namespace WheatLanguage
 
 						if (result)
 						{
-							int target = i + (int)sleepNumber;
-							i = target % statements.Length - 1;
+							string conditionalMark = statement.Operands[3] as string;
+
+							if (!marks.ContainsKey(conditionalMark))
+								Program.Error($"attempted to jump to mark '{conditionalMark}' which does not exist");
+
+							i = marks[conditionalMark] - 1;
 						}
 
 						break;
@@ -177,6 +178,16 @@ namespace WheatLanguage
 						sweptInBag.Labels += ground.Labels;
 
 						ground.Empty();
+
+						break;
+
+					case StatementType.DoMark:
+						string mark = statement.Operands[0] as string;
+
+						if (!marks.ContainsKey(mark))
+							Program.Error($"attempted to jump to mark '{mark}' which does not exist");
+
+						i = marks[mark] - 1;
 
 						break;
 

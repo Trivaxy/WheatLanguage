@@ -9,9 +9,10 @@ namespace WheatLanguage
 
 		public Parser(Token[] tokens) => this.tokens = tokens;
 
-		public Statement[] AssembleTokens()
+		public (Statement[] statements, Dictionary<string, int> marks) AssembleTokens()
 		{
 			List<Statement> statements = new List<Statement>();
+			Dictionary<string, int> marks = new Dictionary<string, int>();
 
 			while (PeekToken().Type != TokenType.EndOfFile)
 			{
@@ -102,7 +103,7 @@ namespace WheatLanguage
 					ExpectToken(TokenType.Bag, "expected keyword 'bag' after 'if'");
 
 					Token identifierToken = ExpectToken(TokenType.Identifier, "expected identifier after keyword 'bag'");
-					Token comparisonToken = default;
+					Token comparisonToken;
 
 					ExpectToken(TokenType.Weight, "expected keyword 'weight' after 'bag'");
 
@@ -123,13 +124,11 @@ namespace WheatLanguage
 					else
 					    comparisonToken = ExpectToken(TokenType.Number, $"expected number after keyword '{comparisonType.ToString().ToLower()}'");
 
-					ExpectToken(TokenType.Sleep, "expected keyword 'sleep' after " + comparisonToken.Value);
+					ExpectToken(TokenType.Do, "expected keyword 'do' after " + comparisonToken.Value);
 
-					Token sleepNumber = ExpectToken(TokenType.Number, "expected number after keyword 'sleep'");
+					Token markIdentifier = ExpectToken(TokenType.Identifier, "expected mark name after keyword 'do'");
 
-					ExpectToken(TokenType.Hours, "expected keyword 'hours' after " + sleepNumber.Value);
-
-					statements.Add(new Statement(StatementType.IfXSleep, identifierToken.Value, comparisonType, comparisonToken.Value, sleepNumber.Value));
+					statements.Add(new Statement(StatementType.IfXDoMark, identifierToken.Value, comparisonType, comparisonToken.Value, markIdentifier.Value));
 				}
 				else if (token.Type == TokenType.Sweep)
 				{
@@ -142,11 +141,24 @@ namespace WheatLanguage
 
 					statements.Add(new Statement(StatementType.SweepInBag, identifierToken.Value));
 				}
+				else if (token.Type == TokenType.Do)
+				{
+					Token markToken = ExpectToken(TokenType.Identifier, "expected identifier name after 'do'");
+
+					statements.Add(new Statement(StatementType.DoMark, markToken.Value));
+				}	
+				else if (token.Type == TokenType.Identifier)
+				{
+					string potentialMarkName = token.Value as string;
+
+					if (NextToken().Type == TokenType.Colon)
+						marks[potentialMarkName] = statements.Count;
+				}
 				else
 					Program.Error("unexpected keyword/token: " + token.Type.ToString());
 			}
 
-			return statements.ToArray();
+			return (statements.ToArray(), marks);
 		}
 
 		public void VerifyRemainingTokens(int amount, string message)

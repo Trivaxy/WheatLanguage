@@ -8,8 +8,9 @@
 		ScoopInBag,
 		DumpBag,
 		AnnounceBag,
-		IfXSleep,
-		SweepInBag
+		IfXDoMark,
+		SweepInBag,
+		DoMark
 	}
 
 	public struct Statement
