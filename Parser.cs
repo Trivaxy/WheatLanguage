@@ -154,6 +154,13 @@ namespace WheatLanguage
 					if (NextToken().Type == TokenType.Colon)
 						marks[potentialMarkName] = statements.Count;
 				}
+				else if (token.Type == TokenType.Revise)
+				{
+					if (NextToken().Type != TokenType.Schedule)
+						Program.Error("expected keyword 'schedule' after 'revise'");
+
+					statements.Add(new Statement(StatementType.ReviseSchedule));
+				}
 				else
 					Program.Error("unexpected keyword/token: " + token.Type.ToString());
 			}

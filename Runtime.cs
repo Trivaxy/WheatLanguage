@@ -44,6 +44,7 @@ namespace WheatLanguage
 		private Dictionary<string, Bag> bags;
 		private Bag ground;
 		private Action<string> announceCallBack;
+		private int revisePosition;
 
 		public Runtime(Statement[] statements, Dictionary<string, int> marks, int grainsOnGround, Action<string> announceCallBack, params (string name, float maxWeight)[] bags)
 		{
@@ -166,6 +167,7 @@ namespace WheatLanguage
 							if (!marks.ContainsKey(conditionalMark))
 								Program.Error($"attempted to jump to mark '{conditionalMark}' which does not exist");
 
+							revisePosition = i;
 							i = marks[conditionalMark] - 1;
 						}
 
@@ -187,8 +189,13 @@ namespace WheatLanguage
 						if (!marks.ContainsKey(mark))
 							Program.Error($"attempted to jump to mark '{mark}' which does not exist");
 
+						revisePosition = i;
 						i = marks[mark] - 1;
 
+						break;
+
+					case StatementType.ReviseSchedule:
+						i = revisePosition;
 						break;
 
 					default:

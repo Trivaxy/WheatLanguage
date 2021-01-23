@@ -15,17 +15,17 @@ namespace WheatLanguage
 			var parserResult = parser.AssembleTokens();
 
 			Runtime runtime = new Runtime(
-				parserResult.statements,
-				parserResult.marks,
-				200,
-				Console.WriteLine,
-				("a", 6),
-				("b", 6),
-				("c", 8),
-				("d", 16),
-				("e", 32),
-				("f", 64),
-				("g", 128)
+			parserResult.statements,
+			parserResult.marks,
+			200,
+			Console.WriteLine,
+			("a", 2),
+			("b", 4),
+			("c", 8),
+			("d", 16),
+			("e", 32),
+			("f", 64),
+			("g", 128)
 			);
 
 			runtime.Execute();

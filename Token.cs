@@ -30,7 +30,9 @@
 		Sweep,
 		And,
 		Colon,
-		Do
+		Do,
+		Revise,
+		Schedule
 	}
 
 	public struct Token

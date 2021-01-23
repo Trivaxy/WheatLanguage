@@ -61,6 +61,8 @@ namespace WheatLanguage
 					"sweep" => TokenType.Sweep,
 					"and" => TokenType.And,
 					"do" => TokenType.Do,
+					"revise" => TokenType.Revise,
+					"schedule" => TokenType.Schedule,
 					_ => TokenType.Pending,
 				};
 
@@ -103,10 +105,14 @@ namespace WheatLanguage
 				{
 					currentPosition++;
 
-					while (CurrentCharacter != '\n')
-						currentPosition++;
+					while (!EOF)
+						if (CurrentCharacter != '\n')
+							currentPosition++;
+						else
+							break;
 
-					currentPosition++;
+					if (EOF)
+						Program.Error("no code detected");
 				}
 
 				currentTokenText.Append(CurrentCharacter);
@@ -116,11 +122,19 @@ namespace WheatLanguage
 					char quote = CurrentCharacter;
 					currentPosition++;
 
-					while (CurrentCharacter != quote)
+					while (!EOF)
 					{
-						currentTokenText.Append(CurrentCharacter);
-						currentPosition++;
+						if (CurrentCharacter != quote)
+						{
+							currentTokenText.Append(CurrentCharacter);
+							currentPosition++;
+						}
+						else
+							break;
 					}
+
+					if (EOF)
+						Program.Error("unterminated string");
 
 					currentTokenText.Append(CurrentCharacter);
 					currentPosition++;

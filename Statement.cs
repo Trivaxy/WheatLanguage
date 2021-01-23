@@ -10,7 +10,8 @@
 		AnnounceBag,
 		IfXDoMark,
 		SweepInBag,
-		DoMark
+		DoMark,
+		ReviseSchedule
 	}
 
 	public struct Statement
