@@ -1,50 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace WheatLanguage
+namespace WheatBot.WheatLang
 {
 	public class Runtime
 	{
-		private class Bag
-		{
-			private const float GrainWeight = 0.001f;
-			private const float CharacterWeight = 0.2f;
-
-			public float Grains;
-			public string Labels;
-			public float MaxWeight;
-
-			public float Weight => Grains * GrainWeight + Labels.Length * CharacterWeight;
-
-			public Bag(float maxWeight)
-			{
-				Grains = 0;
-				Labels = "";
-				MaxWeight = maxWeight;
-			}
-
-			public Bag(float grains, float maxWeight)
-			{
-				Grains = grains;
-				Labels = "";
-				MaxWeight = maxWeight;
-			}
-
-			public void Empty()
-			{
-				Grains = 0;
-				Labels = "";
-			}
-
-			public override string ToString() => (Grains == 0 ? "" : Grains.ToString() + " ") + Labels;
-		}
-
 		private Statement[] statements;
 		private Dictionary<string, int> marks;
 		private Dictionary<string, Bag> bags;
 		private Bag ground;
 		private Action<string> announceCallBack;
 		private int revisePosition;
+		private string invalidBagName;
+
+		public Dictionary<string, Bag> Bags => bags;
 
 		public Runtime(Statement[] statements, Dictionary<string, int> marks, int grainsOnGround, Action<string> announceCallBack, params (string name, float maxWeight)[] bags)
 		{
@@ -58,7 +27,7 @@ namespace WheatLanguage
 				this.bags[bag.name] = new Bag(bag.maxWeight);
 		}
 
-		public void Execute()
+		public string Execute()
 		{
 			for (int i = 0; i < statements.Length; i++)
 			{
@@ -157,7 +126,7 @@ namespace WheatLanguage
 							TokenType.LessThanOrEquals => comparedBag.Weight <= comparisonNumber,
 							TokenType.GreaterThan => comparedBag.Weight > comparisonNumber,
 							TokenType.GreaterThanOrEquals => comparedBag.Weight >= comparisonNumber,
-							_ => Program.Error("invalid statement (this should never happen): " + statement)
+							_ => throw new Exception("invalid comparison token (this should never happen)")
 						};
 
 						if (result)
@@ -165,7 +134,7 @@ namespace WheatLanguage
 							string conditionalMark = statement.Operands[3] as string;
 
 							if (!marks.ContainsKey(conditionalMark))
-								Program.Error($"attempted to jump to mark '{conditionalMark}' which does not exist");
+								return $"attempted to jump to mark '{conditionalMark}' which does not exist";
 
 							revisePosition = i;
 							i = marks[conditionalMark] - 1;
@@ -187,7 +156,7 @@ namespace WheatLanguage
 						string mark = statement.Operands[0] as string;
 
 						if (!marks.ContainsKey(mark))
-							Program.Error($"attempted to jump to mark '{mark}' which does not exist");
+							return $"attempted to jump to mark '{mark}' which does not exist";
 
 						revisePosition = i;
 						i = marks[mark] - 1;
@@ -199,8 +168,7 @@ namespace WheatLanguage
 						break;
 
 					default:
-						Program.Error("invalid statement (this should never happen): " + statement);
-						break;
+						return "invalid statement (this should never happen): " + statement;
 				}
 
 				foreach (KeyValuePair<string, Bag> bagPairs in bags)
@@ -209,18 +177,28 @@ namespace WheatLanguage
 					Bag bag = bagPairs.Value;
 
 					if (bag.Weight > bag.MaxWeight)
-						Program.Error($"bag {bagName} broke (weight {bag.Weight}, maximum weight is {bag.MaxWeight})");
+						return $"bag {bagName} broke (weight {bag.Weight}, maximum weight is {bag.MaxWeight})";
 				}
 
 				if (ground.Grains < 0)
-					Program.Error("attempted to take grains from ground when there were none");
+					return "attempted to take grains from ground when there were none";
+
+				if (invalidBagName != null)
+					return $"the bag {invalidBagName} does not exist";
 			}
+
+			return null;
 		}
 
 		private Bag GetBag(string bagName)
 		{
 			if (!bags.ContainsKey(bagName))
-				Program.Error($"bag {bagName} does not exist");
+			{
+				if (invalidBagName == null)
+					invalidBagName = bagName;
+
+				return new Bag(0);
+			}
 
 			return bags[bagName];
 		}

@@ -1,15 +1,16 @@
 ﻿using System.Collections.Generic;
 
-namespace WheatLanguage
+namespace WheatBot.WheatLang
 {
 	public class Parser
 	{
 		private Token[] tokens;
 		private int currentPosition;
+		private string currentError;
 
 		public Parser(Token[] tokens) => this.tokens = tokens;
 
-		public (Statement[] statements, Dictionary<string, int> marks) AssembleTokens()
+		public ParserResult AssembleTokens()
 		{
 			List<Statement> statements = new List<Statement>();
 			Dictionary<string, int> marks = new Dictionary<string, int>();
@@ -111,7 +112,7 @@ namespace WheatLanguage
 
 					if (!(comparisonType == TokenType.Is || comparisonType == TokenType.LessThan || comparisonType == TokenType.LessThanOrEquals
 						|| comparisonType == TokenType.GreaterThan || comparisonType == TokenType.GreaterThanOrEquals))
-						Program.Error("expected keyword 'is', 'lessthan' or 'greaterthan' after 'weight'");
+						return new ParserResult("expected keyword 'is', 'lessthan' or 'greaterthan' after 'weight'");
 
 					if (PeekToken().Type == TokenType.Bag)
 					{
@@ -157,21 +158,24 @@ namespace WheatLanguage
 				else if (token.Type == TokenType.Revise)
 				{
 					if (NextToken().Type != TokenType.Schedule)
-						Program.Error("expected keyword 'schedule' after 'revise'");
+						return new ParserResult("expected keyword 'schedule' after 'revise'");
 
 					statements.Add(new Statement(StatementType.ReviseSchedule));
 				}
 				else
-					Program.Error("unexpected keyword/token: " + token.Type.ToString());
+					return new ParserResult("unexpected keyword/token: " + token.Type.ToString());
+
+				if (currentError != null)
+					return new ParserResult(currentError);
 			}
 
-			return (statements.ToArray(), marks);
+			return new ParserResult(statements.ToArray(), marks);
 		}
 
 		public void VerifyRemainingTokens(int amount, string message)
 		{
-			if (currentPosition + amount >= tokens.Length)
-				Program.Error(message);
+			if (currentPosition + amount >= tokens.Length && currentError == null)
+				currentError = message;
 		}
 
 		public Token PeekToken() => tokens[currentPosition + 1];
@@ -182,8 +186,8 @@ namespace WheatLanguage
 		{
 			Token token = NextToken();
 
-			if (token.Type != type)
-				Program.Error(message);
+			if (token.Type != type && currentError == null)
+				currentError = message;
 
 			return token;
 		}

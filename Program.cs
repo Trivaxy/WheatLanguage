@@ -1,41 +1,31 @@
-﻿using System;
+﻿using Discord.Commands;
+using Discord.WebSocket;
+using System;
+using System.IO;
+using System.Threading.Tasks;
 
-namespace WheatLanguage
+namespace WheatBot
 {
-	class Program
+	public static class Program
 	{
-		static void Main(string[] args)
+		public static DiscordSocketClient Client { get; private set; }
+
+		public static CommandService CommandService { get; private set; }
+
+		static void Main(string[] args) => MainAsync().GetAwaiter().GetResult();
+
+		public static async Task MainAsync()
 		{
-			string s = @"
+			string token = File.ReadAllText("token.txt").Trim();
 
-";
+			Client = new DiscordSocketClient();
+			await Client.LoginAsync(Discord.TokenType.Bot, token);
+			await Client.StartAsync();
 
-			Lexer lexer = new Lexer(s);
-			Parser parser = new Parser(lexer.Tokenize());
-			var parserResult = parser.AssembleTokens();
+			CommandService = new CommandService();
+			await MessageHandler.RegisterCommandsAsync();
 
-			Runtime runtime = new Runtime(
-			parserResult.statements,
-			parserResult.marks,
-			200,
-			Console.WriteLine,
-			("a", 2),
-			("b", 4),
-			("c", 8),
-			("d", 16),
-			("e", 32),
-			("f", 64),
-			("g", 128)
-			);
-
-			runtime.Execute();
-		}
-
-		public static bool Error(string message)
-		{
-			Console.WriteLine("error: " + message);
-			Environment.Exit(0);
-			return false;
+			await Task.Delay(-1);
 		}
 	}
 }

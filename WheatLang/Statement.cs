@@ -1,4 +1,4 @@
-﻿namespace WheatLanguage
+﻿namespace WheatBot.WheatLang
 {
 	public enum StatementType
 	{

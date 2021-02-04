@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 
-namespace WheatLanguage
+namespace WheatBot.WheatLang
 {
 	public class Lexer
 	{
 		private string inputSource;
 		private int currentPosition;
 		private StringBuilder currentTokenText;
+		private string currentError;
 
 		private bool EOF => currentPosition >= inputSource.Length;
 
@@ -19,7 +20,7 @@ namespace WheatLanguage
 			currentTokenText = new StringBuilder();
 		}
 
-		public Token[] Tokenize()
+		public LexerResult Tokenize()
 		{
 			List<Token> tokens = new List<Token>();
 
@@ -35,6 +36,14 @@ namespace WheatLanguage
 				}
 
 				string word = ReadNextWord();
+
+				if (word == null)
+				{
+					if (currentError != null)
+						return new LexerResult(currentError);
+
+					continue;
+				}
 
 				object tokenValue = null;
 				TokenType tokenType = word switch
@@ -89,7 +98,8 @@ namespace WheatLanguage
 			}
 
 			tokens.Add(new Token(TokenType.EndOfFile));
-			return tokens.ToArray();
+
+			return new LexerResult(tokens.ToArray());
 		}
 
 		public string ReadNextWord()
@@ -99,22 +109,22 @@ namespace WheatLanguage
 			while (char.IsWhiteSpace(CurrentCharacter))
 				currentPosition++;
 
-			while (!EOF && !char.IsWhiteSpace(CurrentCharacter) && CurrentCharacter != ':')
+			if (CurrentCharacter == '#')
 			{
-				if (CurrentCharacter == '#')
-				{
+				currentPosition++;
+
+				while (!EOF && CurrentCharacter != '\n')
 					currentPosition++;
 
-					while (!EOF)
-						if (CurrentCharacter != '\n')
-							currentPosition++;
-						else
-							break;
+				if (EOF)
+					return null;
+			}
 
-					if (EOF)
-						Program.Error("no code detected");
-				}
+			while (char.IsWhiteSpace(CurrentCharacter))
+				currentPosition++;
 
+			while (!EOF && !char.IsWhiteSpace(CurrentCharacter) && CurrentCharacter != ':')
+			{
 				currentTokenText.Append(CurrentCharacter);
 
 				if (CurrentCharacter == '"' || CurrentCharacter == '\'')
@@ -134,7 +144,10 @@ namespace WheatLanguage
 					}
 
 					if (EOF)
-						Program.Error("unterminated string");
+					{
+						currentError = "unterminated string";
+						return null;
+					}
 
 					currentTokenText.Append(CurrentCharacter);
 					currentPosition++;
